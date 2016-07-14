@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity
 
     String BASE_URL = "http://news-at.zhihu.com";
     TextView tvTitle;
+    TextView tvId;
     ImageView ivImage;
 
     Handler handler;
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity
 
         tvTitle = (TextView) findViewById(R.id.tv_latest_title);
         ivImage = (ImageView) findViewById(R.id.iv_latest_image);
+        tvId = (TextView)findViewById(R.id.tv_latest_id);
 
         handler = new Handler() {
             @Override
@@ -194,14 +196,8 @@ public class MainActivity extends AppCompatActivity
                                 }
 
                             }.start();
-//                            Log.i("NewsLatest",
-//                                    story[0].getId() + "\n"
-//                                            + story[0].getTitle() + "\n"
-//                                            + story[0].getImages().size());
-//                            Log.i("NewsLatest", story[0].getId() + "\n" + story[0].getTitle()+"\n"+story[0].getGa_prefix());
-
-
                             tvTitle.setText(story[0].getTitle());
+                            tvId.setText(story[0].getId());
                         }
                     }
                 }
