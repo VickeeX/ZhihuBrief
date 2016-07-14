@@ -12,19 +12,20 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.vickee.zhihubrief.NewsResult.NewsLatestResult;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -38,12 +39,10 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     String BASE_URL = "http://news-at.zhihu.com";
-    TextView tvTitle;
-    TextView tvId;
-    ImageView ivImage;
-
+    List<Bitmap> bitmap;
     Handler handler;
-    Bitmap bitmap;
+    NewsLatestAdapter newsLatestAdapter;
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,16 +69,14 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        tvTitle = (TextView) findViewById(R.id.tv_latest_title);
-        ivImage = (ImageView) findViewById(R.id.iv_latest_image);
-        tvId = (TextView) findViewById(R.id.tv_latest_id);
 
+        recyclerView = (RecyclerView) findViewById(R.id.rv_latest_news);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 if (msg.what == 0x123) {
-                    Log.i("ImageProcessed", "msg received:" + msg.what);
-                    ivImage.setImageBitmap(bitmap);
+//Adapter
                 }
             }
         };
@@ -148,6 +145,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void queryLatestNews() {
+        bitmap = new ArrayList<>();
         Retrofit retrofit = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(BASE_URL)
@@ -155,51 +153,50 @@ public class MainActivity extends AppCompatActivity
 
         ZhihuLatestService service = retrofit.create(ZhihuLatestService.class);
         Call<NewsLatestResult> call = service.getResult();
-
         call.enqueue(new Callback<NewsLatestResult>() {
             @Override
             public void onResponse(Call<NewsLatestResult> call, Response<NewsLatestResult> response) {
-                Log.e("ZhihuLatestNews", "not successful");
                 if (response.isSuccessful()) {
                     NewsLatestResult result = response.body();
                     if (result != null) {
-                        Log.i("ZhihuLatestNews", "get result not null.\nDate:"
-                                + result.date + "\nStories:" + result.stories);
-                        List<NewsLatestResult.StoriesBean> story = result.stories;
+                        final List<NewsLatestResult.StoriesBean> story = result.stories;
                         if (story.size() != 0) {
-                            final List<String> images = story.get(0).images;
-                            new Thread() {
+//                            final List<String> images = new ArrayList<>();
+                            for (int i = 0; i < story.size(); i++) {
+//                                下载每个story下的images的第一张图片，并加入图片列表
+                                final int finalI = i;
+                                new Thread() {
+                                    public void run() {
+                                        try {
+                                            URL url = new URL(story.get(finalI).images.get(0));
+                                            InputStream inputStream = url.openStream();
+                                            bitmap.add(BitmapFactory.decodeStream(inputStream));
+                                            handler.sendEmptyMessage(0x123);
+                                            inputStream.close();
+                                            inputStream = url.openStream();
 
-                                public void run() {
-                                    try {
-                                        URL url = new URL(images.get(0));
-                                        InputStream inputStream = url.openStream();
-                                        bitmap = BitmapFactory.decodeStream(inputStream);
-                                        handler.sendEmptyMessage(0x123);
-                                        inputStream.close();
-                                        inputStream = url.openStream();
+                                            OutputStream outputStream = openFileOutput("image" + finalI + ".png", MODE_PRIVATE);
+                                            byte[] buff = new byte[1024];
+                                            int hasRead = 0;
+                                            while ((hasRead = inputStream.read(buff)) > 0) {
+                                                outputStream.write(buff, 0, hasRead);
+                                            }
+                                            inputStream.close();
+                                            outputStream.close();
 
-                                        OutputStream outputStream = openFileOutput("firstImage.png", MODE_PRIVATE);
-                                        byte[] buff = new byte[1024];
-                                        int hasRead = 0;
-                                        while ((hasRead = inputStream.read(buff)) > 0) {
-                                            outputStream.write(buff, 0, hasRead);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        } finally {
+                                            Log.e("UrlThread", "run: end");
                                         }
-                                        inputStream.close();
-                                        outputStream.close();
-
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    } finally {
-                                        Log.e("UrlThread", "run: end");
                                     }
-                                }
 
-                            }.start();
-                            tvTitle.setText(story.get(0).title);
-                            tvId.setText(story.get(0).id);
-                            Log.e("LatestNews", "Type:"+story.get(0).type);
-                            Log.e("LatestNews", "Id:"+story.get(0).id);
+                                }.start();
+                                Log.e("LatestNews", "Type:" + story.get(0).type);
+                                Log.e("LatestNews", "Id:" + story.get(0).id);
+                            }
+                            newsLatestAdapter = new NewsLatestAdapter(MainActivity.this, story, bitmap);
+                            recyclerView.setAdapter(newsLatestAdapter);
                         }
                     }
                 }
