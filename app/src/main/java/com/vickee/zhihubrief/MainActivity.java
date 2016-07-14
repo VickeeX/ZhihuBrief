@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity
 
         tvTitle = (TextView) findViewById(R.id.tv_latest_title);
         ivImage = (ImageView) findViewById(R.id.iv_latest_image);
-        tvId = (TextView)findViewById(R.id.tv_latest_id);
+        tvId = (TextView) findViewById(R.id.tv_latest_id);
 
         handler = new Handler() {
             @Override
@@ -164,10 +164,10 @@ public class MainActivity extends AppCompatActivity
                     NewsLatestResult result = response.body();
                     if (result != null) {
                         Log.i("ZhihuLatestNews", "get result not null.\nDate:"
-                                + result.getDate() + "\nStories:" + result.getStories());
-                        NewsLatestResult.Stories[] story = result.getStories();
-                        if (story.length != 0) {
-                            final List<String> images = story[0].getImages();
+                                + result.date + "\nStories:" + result.stories);
+                        List<NewsLatestResult.StoriesBean> story = result.stories;
+                        if (story.size() != 0) {
+                            final List<String> images = story.get(0).images;
                             new Thread() {
 
                                 public void run() {
@@ -196,8 +196,15 @@ public class MainActivity extends AppCompatActivity
                                 }
 
                             }.start();
-                            tvTitle.setText(story[0].getTitle());
-                            tvId.setText(story[0].getId());
+                            tvTitle.setText(story.get(0).title);
+                            tvId.setText("ID: " + story.get(0).id);
+                            Log.e("LatestNews", "Type:" + story.get(0).type);
+                            Log.e("LatestNews", "Id:" + story.get(0).id);
+
+//                            if (String.valueOf(story.get(0).id) == null) {
+//                                Log.e("LatestNews", "id is null");
+//                            }
+
                         }
                     }
                 }
