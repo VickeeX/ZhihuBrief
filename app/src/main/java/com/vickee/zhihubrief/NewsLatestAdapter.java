@@ -49,13 +49,11 @@ public class NewsLatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         if (holder instanceof LatestNewsOdd) {
             ((LatestNewsOdd) holder).tvTitle.setText(story.title);
             ((LatestNewsOdd) holder).tvId.setText("ID:" + story.id);
-            Log.i("NewsLatestAdapter", "Size:" + bitmap.size());
-            ((LatestNewsOdd) holder).ivImage.setImageBitmap(bitmap.get(0));
+            ((LatestNewsOdd) holder).ivImage.setImageBitmap(bitmap.get(position));
         } else if (holder instanceof LatestNewsEven) {
             ((LatestNewsEven) holder).tvTitle.setText(story.title);
             ((LatestNewsEven) holder).tvId.setText("ID:" + story.id);
-            ((LatestNewsEven) holder).ivImage.setImageBitmap(bitmap.get(0));
-//        }else{
+            ((LatestNewsEven) holder).ivImage.setImageBitmap(bitmap.get(position));
         }
     }
 

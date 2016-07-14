@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.vickee.zhihubrief.NewsResult.NewsLatestResult;
+import com.vickee.zhihubrief.widget.DividerDecoration;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -41,9 +42,12 @@ public class MainActivity extends AppCompatActivity
     String BASE_URL = "http://news-at.zhihu.com";
     List<Bitmap> bitmap;
     List<NewsLatestResult.StoriesBean> story;
+    List<URL> urls;
     Handler handler;
     NewsLatestAdapter newsLatestAdapter;
     RecyclerView recyclerView;
+    OutputStream outputStream;
+    InputStream inputStream;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +77,7 @@ public class MainActivity extends AppCompatActivity
 
         recyclerView = (RecyclerView) findViewById(R.id.rv_latest_news);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.addItemDecoration(new DividerDecoration(this));
         handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -84,6 +89,7 @@ public class MainActivity extends AppCompatActivity
         };
         bitmap = new ArrayList<>();
         story = new ArrayList<>();
+        urls = new ArrayList<>();
     }
 
     @Override
@@ -165,26 +171,38 @@ public class MainActivity extends AppCompatActivity
                         story = result.stories;
                         if (story.size() != 0) {
                             bitmap.clear();
+                            urls.clear();
                             new Thread() {
                                 public void run() {
                                     try {
                                         for (int i = 0; i < story.size(); i++) {
                                             Log.i("LatestNews", "image[" + i + "]: " + story.get(i).images.get(0));
+                                            urls.add(i, new URL(story.get(i).images.get(0)));
+                                            inputStream = urls.get(i).openStream();
+                                            bitmap.add(BitmapFactory.decodeStream(inputStream));
+                                            inputStream.close();
+                                            inputStream = urls.get(i).openStream();
+                                            outputStream = openFileOutput("image0.png", MODE_PRIVATE);
+                                            byte[] buff = new byte[1024];
+                                            int hasRead;
+                                            while ((hasRead = inputStream.read(buff)) > 0) {
+                                                outputStream.write(buff, 0, hasRead);
+                                            }
+                                            inputStream.close();
+                                            outputStream.close();
                                         }
-                                        URL url = new URL(story.get(0).images.get(0));
-                                        InputStream inputStream = url.openStream();
-                                        bitmap.add(BitmapFactory.decodeStream(inputStream));
+//                                        URL url = new URL(story.get(0).images.get(0));
                                         handler.sendEmptyMessage(0x123);
-                                        inputStream.close();
-                                        inputStream = url.openStream();
-                                        OutputStream outputStream = openFileOutput("image0.png", MODE_PRIVATE);
-                                        byte[] buff = new byte[1024];
-                                        int hasRead;
-                                        while ((hasRead = inputStream.read(buff)) > 0) {
-                                            outputStream.write(buff, 0, hasRead);
-                                        }
-                                        inputStream.close();
-                                        outputStream.close();
+//                                        inputStream.close();
+//                                        inputStream = url.openStream();
+//                                        OutputStream outputStream = openFileOutput("image0.png", MODE_PRIVATE);
+//                                        byte[] buff = new byte[1024];
+//                                        int hasRead;
+//                                        while ((hasRead = inputStream.read(buff)) > 0) {
+//                                            outputStream.write(buff, 0, hasRead);
+//                                        }
+//                                        inputStream.close();
+//                                        outputStream.close();
 
                                     } catch (Exception e) {
                                         e.printStackTrace();
