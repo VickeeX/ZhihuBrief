@@ -1,18 +1,16 @@
 package com.vickee.zhihubrief;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.vickee.zhihubrief.NewsResult.NewsLatestResult;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,15 +19,11 @@ import java.util.List;
 public class NewsLatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<NewsLatestResult.StoriesBean> storiesBeen;
     private Context mContext;
-    private List<Bitmap> bitmap = new ArrayList<>();
 
 
-    public NewsLatestAdapter(Context context, List<NewsLatestResult.StoriesBean> storiesBeen, List<Bitmap> bitmap) {
+    public NewsLatestAdapter(Context context, List<NewsLatestResult.StoriesBean> storiesBeen) {
         this.mContext = context;
         this.storiesBeen = storiesBeen;
-        this.bitmap = bitmap;
-        Log.i("NewsLatestAdapter", "Size:" + bitmap.size());
-
     }
 
     @Override
@@ -48,12 +42,12 @@ public class NewsLatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         NewsLatestResult.StoriesBean story = storiesBeen.get(position);
         if (holder instanceof LatestNewsOdd) {
             ((LatestNewsOdd) holder).tvTitle.setText(story.title);
-            ((LatestNewsOdd) holder).tvId.setText("ID:" + story.id);
-            ((LatestNewsOdd) holder).ivImage.setImageBitmap(bitmap.get(position));
+            ((LatestNewsOdd) holder).tvId.setText("[图片" + story.images.size()+"张]");
+            Picasso.with(mContext).load(story.images.get(0)).into(((LatestNewsOdd) holder).ivImage);
         } else if (holder instanceof LatestNewsEven) {
             ((LatestNewsEven) holder).tvTitle.setText(story.title);
-            ((LatestNewsEven) holder).tvId.setText("ID:" + story.id);
-            ((LatestNewsEven) holder).ivImage.setImageBitmap(bitmap.get(position));
+            ((LatestNewsEven) holder).tvId.setText("[图片" + story.images.size()+"张]");
+            Picasso.with(mContext).load(story.images.get(0)).into(((LatestNewsEven) holder).ivImage);
         }
     }
 

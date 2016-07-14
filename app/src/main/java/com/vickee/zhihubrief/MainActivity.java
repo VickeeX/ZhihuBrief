@@ -1,10 +1,6 @@
 package com.vickee.zhihubrief;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -23,9 +19,6 @@ import android.view.View;
 import com.vickee.zhihubrief.NewsResult.NewsLatestResult;
 import com.vickee.zhihubrief.widget.DividerDecoration;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,14 +33,9 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     String BASE_URL = "http://news-at.zhihu.com";
-    List<Bitmap> bitmap;
     List<NewsLatestResult.StoriesBean> story;
-    List<URL> urls;
-    Handler handler;
     NewsLatestAdapter newsLatestAdapter;
     RecyclerView recyclerView;
-    OutputStream outputStream;
-    InputStream inputStream;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,18 +66,7 @@ public class MainActivity extends AppCompatActivity
         recyclerView = (RecyclerView) findViewById(R.id.rv_latest_news);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new DividerDecoration(this));
-        handler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                if (msg.what == 0x123) {
-                    newsLatestAdapter = new NewsLatestAdapter(MainActivity.this, story, bitmap);
-                    recyclerView.setAdapter(newsLatestAdapter);
-                }
-            }
-        };
-        bitmap = new ArrayList<>();
         story = new ArrayList<>();
-        urls = new ArrayList<>();
     }
 
     @Override
@@ -170,48 +147,8 @@ public class MainActivity extends AppCompatActivity
                     if (result != null) {
                         story = result.stories;
                         if (story.size() != 0) {
-                            bitmap.clear();
-                            urls.clear();
-                            new Thread() {
-                                public void run() {
-                                    try {
-                                        for (int i = 0; i < story.size(); i++) {
-                                            Log.i("LatestNews", "image[" + i + "]: " + story.get(i).images.get(0));
-                                            urls.add(i, new URL(story.get(i).images.get(0)));
-                                            inputStream = urls.get(i).openStream();
-                                            bitmap.add(BitmapFactory.decodeStream(inputStream));
-                                            inputStream.close();
-                                            inputStream = urls.get(i).openStream();
-                                            outputStream = openFileOutput("image0.png", MODE_PRIVATE);
-                                            byte[] buff = new byte[1024];
-                                            int hasRead;
-                                            while ((hasRead = inputStream.read(buff)) > 0) {
-                                                outputStream.write(buff, 0, hasRead);
-                                            }
-                                            inputStream.close();
-                                            outputStream.close();
-                                        }
-//                                        URL url = new URL(story.get(0).images.get(0));
-                                        handler.sendEmptyMessage(0x123);
-//                                        inputStream.close();
-//                                        inputStream = url.openStream();
-//                                        OutputStream outputStream = openFileOutput("image0.png", MODE_PRIVATE);
-//                                        byte[] buff = new byte[1024];
-//                                        int hasRead;
-//                                        while ((hasRead = inputStream.read(buff)) > 0) {
-//                                            outputStream.write(buff, 0, hasRead);
-//                                        }
-//                                        inputStream.close();
-//                                        outputStream.close();
-
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    } finally {
-                                        Log.e("UrlThread", "run: end");
-                                    }
-                                }
-                            }.start();
-                            Log.i("LatestNews", "Bitmap:" + bitmap.size());
+                            newsLatestAdapter = new NewsLatestAdapter(MainActivity.this, story);
+                            recyclerView.setAdapter(newsLatestAdapter);
                         }
                     }
                 }

@@ -24,7 +24,7 @@
             android:id="@+id/tv_latest_title_even"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="15sp" />
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/tv_latest_id_even"

@@ -12,26 +12,29 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:paddingTop="6dp"
-        android:paddingRight="6dp">
+        android:paddingRight="6dp"
+        android:paddingTop="6dp">
 
         <TextView
             android:id="@+id/tv_latest_title_odd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="15sp" />
+            android:text="11111"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/tv_latest_id_odd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="6dp"
+            android:text="111111"
             android:textColor="@color/grey" />
     </LinearLayout>
 
     <ImageView
         android:id="@+id/iv_latest_image_odd"
-        android:layout_gravity="end"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"/>
+        <!--android:background="@color/colorAccent" />-->
 </LinearLayout>
