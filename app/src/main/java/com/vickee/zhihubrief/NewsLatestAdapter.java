@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.vickee.zhihubrief.NewsResult.NewsLatestResult;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,13 +21,15 @@ import java.util.List;
 public class NewsLatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<NewsLatestResult.StoriesBean> storiesBeen;
     private Context mContext;
-    private List<Bitmap> bitmap;
+    private List<Bitmap> bitmap = new ArrayList<>();
 
 
     public NewsLatestAdapter(Context context, List<NewsLatestResult.StoriesBean> storiesBeen, List<Bitmap> bitmap) {
         this.mContext = context;
         this.storiesBeen = storiesBeen;
         this.bitmap = bitmap;
+        Log.i("NewsLatestAdapter", "Size:" + bitmap.size());
+
     }
 
     @Override
@@ -47,11 +50,11 @@ public class NewsLatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             ((LatestNewsOdd) holder).tvTitle.setText(story.title);
             ((LatestNewsOdd) holder).tvId.setText("ID:" + story.id);
             Log.i("NewsLatestAdapter", "Size:" + bitmap.size());
-//            ((LatestNewsOdd) holder).ivImage.setImageBitmap(bitmap.get(0));
+            ((LatestNewsOdd) holder).ivImage.setImageBitmap(bitmap.get(0));
         } else if (holder instanceof LatestNewsEven) {
             ((LatestNewsEven) holder).tvTitle.setText(story.title);
             ((LatestNewsEven) holder).tvId.setText("ID:" + story.id);
-//            ((LatestNewsEven) holder).ivImage.setImageBitmap(bitmap.get(0));
+            ((LatestNewsEven) holder).ivImage.setImageBitmap(bitmap.get(0));
 //        }else{
         }
     }

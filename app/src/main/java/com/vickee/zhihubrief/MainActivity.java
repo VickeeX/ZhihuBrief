@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity
 
     String BASE_URL = "http://news-at.zhihu.com";
     List<Bitmap> bitmap;
+    List<NewsLatestResult.StoriesBean> story;
     Handler handler;
     NewsLatestAdapter newsLatestAdapter;
     RecyclerView recyclerView;
@@ -76,10 +77,13 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void handleMessage(Message msg) {
                 if (msg.what == 0x123) {
-//Adapter
+                    newsLatestAdapter = new NewsLatestAdapter(MainActivity.this, story, bitmap);
+                    recyclerView.setAdapter(newsLatestAdapter);
                 }
             }
         };
+        bitmap = new ArrayList<>();
+        story = new ArrayList<>();
     }
 
     @Override
@@ -145,7 +149,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void queryLatestNews() {
-        bitmap = new ArrayList<>();
         Retrofit retrofit = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(BASE_URL)
@@ -159,55 +162,24 @@ public class MainActivity extends AppCompatActivity
                 if (response.isSuccessful()) {
                     NewsLatestResult result = response.body();
                     if (result != null) {
-                        final List<NewsLatestResult.StoriesBean> story = result.stories;
+                        story = result.stories;
                         if (story.size() != 0) {
-////                            final List<String> images = new ArrayList<>();
-//                            for (int i = 0; i < story.size(); i++) {
-////                                下载每个story下的images的第一张图片，并加入图片列表
-//                                final int finalI = i;
-//                                new Thread() {
-//                                    public void run() {
-//                                        try {
-//                                            URL url = new URL(story.get(0).images.get(0));
-//                                            InputStream inputStream = url.openStream();
-//                                            bitmap.add(BitmapFactory.decodeStream(inputStream));
-//                                            handler.sendEmptyMessage(0x123);
-//                                            inputStream.close();
-//                                            inputStream = url.openStream();
-//
-//                                            OutputStream outputStream = openFileOutput("image" + finalI + ".png", MODE_PRIVATE);
-//                                            byte[] buff = new byte[1024];
-//                                            int hasRead = 0;
-//                                            while ((hasRead = inputStream.read(buff)) > 0) {
-//                                                outputStream.write(buff, 0, hasRead);
-//                                            }
-//                                            inputStream.close();
-//                                            outputStream.close();
-//
-//                                        } catch (Exception e) {
-//                                            e.printStackTrace();
-//                                        } finally {
-//                                            Log.e("UrlThread", "run: end");
-//                                        }
-//                                    }
-//                                }.start();
-//                                Log.e("LatestNews", "Type:" + story.get(0).type);
-//                                Log.e("LatestNews", "Id:" + story.get(0).id);
-//                            }
-
+                            bitmap.clear();
                             new Thread() {
                                 public void run() {
                                     try {
+                                        for (int i = 0; i < story.size(); i++) {
+                                            Log.i("LatestNews", "image[" + i + "]: " + story.get(i).images.get(0));
+                                        }
                                         URL url = new URL(story.get(0).images.get(0));
                                         InputStream inputStream = url.openStream();
                                         bitmap.add(BitmapFactory.decodeStream(inputStream));
                                         handler.sendEmptyMessage(0x123);
                                         inputStream.close();
                                         inputStream = url.openStream();
-
                                         OutputStream outputStream = openFileOutput("image0.png", MODE_PRIVATE);
                                         byte[] buff = new byte[1024];
-                                        int hasRead = 0;
+                                        int hasRead;
                                         while ((hasRead = inputStream.read(buff)) > 0) {
                                             outputStream.write(buff, 0, hasRead);
                                         }
@@ -221,8 +193,7 @@ public class MainActivity extends AppCompatActivity
                                     }
                                 }
                             }.start();
-                            newsLatestAdapter = new NewsLatestAdapter(MainActivity.this, story, bitmap);
-                            recyclerView.setAdapter(newsLatestAdapter);
+                            Log.i("LatestNews", "Bitmap:" + bitmap.size());
                         }
                     }
                 }
