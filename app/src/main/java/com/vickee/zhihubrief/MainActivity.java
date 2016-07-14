@@ -197,14 +197,9 @@ public class MainActivity extends AppCompatActivity
 
                             }.start();
                             tvTitle.setText(story.get(0).title);
-                            tvId.setText("ID: " + story.get(0).id);
-                            Log.e("LatestNews", "Type:" + story.get(0).type);
-                            Log.e("LatestNews", "Id:" + story.get(0).id);
-
-//                            if (String.valueOf(story.get(0).id) == null) {
-//                                Log.e("LatestNews", "id is null");
-//                            }
-
+                            tvId.setText(story.get(0).id);
+                            Log.e("LatestNews", "Type:"+story.get(0).type);
+                            Log.e("LatestNews", "Id:"+story.get(0).id);
                         }
                     }
                 }
