@@ -3,6 +3,7 @@ package com.vickee.zhihubrief;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,12 +45,13 @@ public class NewsLatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         NewsLatestResult.StoriesBean story = storiesBeen.get(position);
         if (holder instanceof LatestNewsOdd) {
             ((LatestNewsOdd) holder).tvTitle.setText(story.title);
-            ((LatestNewsOdd) holder).tvId.setText(story.id);
-            ((LatestNewsOdd) holder).ivImage.setImageBitmap(bitmap.get(position));
+            ((LatestNewsOdd) holder).tvId.setText("ID:" + story.id);
+            Log.i("NewsLatestAdapter", "Size:" + bitmap.size());
+//            ((LatestNewsOdd) holder).ivImage.setImageBitmap(bitmap.get(0));
         } else if (holder instanceof LatestNewsEven) {
             ((LatestNewsEven) holder).tvTitle.setText(story.title);
-            ((LatestNewsEven) holder).tvId.setText(story.id);
-            ((LatestNewsEven) holder).ivImage.setImageBitmap(bitmap.get(position));
+            ((LatestNewsEven) holder).tvId.setText("ID:" + story.id);
+//            ((LatestNewsEven) holder).ivImage.setImageBitmap(bitmap.get(0));
 //        }else{
         }
     }
