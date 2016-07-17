@@ -17,9 +17,14 @@ import java.util.List;
  * Created by Vickee on 2016/7/14.
  */
 public class NewsLatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
     private List<NewsLatestResult.StoriesBean> storiesBeen;
     private Context mContext;
+    private NewsLatestAdapter.OnItemClickListener onItemClickListener;
 
+    public void setOnItemClickListener(NewsLatestAdapter.OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
 
     public NewsLatestAdapter(Context context, List<NewsLatestResult.StoriesBean> storiesBeen) {
         this.mContext = context;
@@ -38,16 +43,25 @@ public class NewsLatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        NewsLatestResult.StoriesBean story = storiesBeen.get(position);
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+
+        final NewsLatestResult.StoriesBean story = storiesBeen.get(position);
         if (holder instanceof LatestNewsOdd) {
             ((LatestNewsOdd) holder).tvTitle.setText(story.title);
-            ((LatestNewsOdd) holder).tvId.setText("[图片" + story.images.size()+"张]");
+            ((LatestNewsOdd) holder).tvId.setText("[图片" + story.images.size() + "张]");
             Picasso.with(mContext).load(story.images.get(0)).into(((LatestNewsOdd) holder).ivImage);
         } else if (holder instanceof LatestNewsEven) {
             ((LatestNewsEven) holder).tvTitle.setText(story.title);
-            ((LatestNewsEven) holder).tvId.setText("[图片" + story.images.size()+"张]");
+            ((LatestNewsEven) holder).tvId.setText("[图片" + story.images.size() + "张]");
             Picasso.with(mContext).load(story.images.get(0)).into(((LatestNewsEven) holder).ivImage);
+        }
+        if (onItemClickListener != null) {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onItemClickListener.onItemClick(holder.itemView,position);
+                }
+            });
         }
     }
 
@@ -91,4 +105,9 @@ public class NewsLatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             return 0;
         }
     }
+
+    public interface OnItemClickListener {
+        void onItemClick(View view, int position);
+    }
+
 }

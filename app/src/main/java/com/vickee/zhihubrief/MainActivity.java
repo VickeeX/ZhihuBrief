@@ -1,5 +1,6 @@
 package com.vickee.zhihubrief;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -148,6 +149,12 @@ public class MainActivity extends AppCompatActivity
                         story = result.stories;
                         if (story.size() != 0) {
                             newsLatestAdapter = new NewsLatestAdapter(MainActivity.this, story);
+                            newsLatestAdapter.setOnItemClickListener(new NewsLatestAdapter.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(View view, int position) {
+                                    startActivity(new Intent(MainActivity.this,NewsActivity.class).putExtra("id",story.get(position).id));
+                                }
+                            });
                             recyclerView.setAdapter(newsLatestAdapter);
                         }
                     }
