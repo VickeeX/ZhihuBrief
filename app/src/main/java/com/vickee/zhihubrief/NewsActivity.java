@@ -8,9 +8,21 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
+import com.vickee.zhihubrief.NewsResult.NewsContentResult;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.GET;
+import retrofit2.http.Path;
+
 public class NewsActivity extends AppCompatActivity {
+    String BASE_URL = "http://news-at.zhihu.com";
     private static final String TAG = "NewsActivity";
-    private int id;
+    static int newsId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,9 +39,47 @@ public class NewsActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-
-        id = this.getIntent().getIntExtra("id",0);
-        Log.i(TAG,"id:"+id);
+        newsId = NewsActivity.this.getIntent().getIntExtra("id", 0);
+        Log.i(TAG, "id:" + newsId);
+        new Thread(){
+            @Override
+            public void run() {
+                QueryNews();
+                Log.i(TAG,"new thread");
+            }
+        }.start();
     }
 
+
+    public interface ZhihuNewsService {
+        @GET("/api/4/news/{newsId}")
+        Call<NewsContentResult> getResult(@Path("newsId") int newsId);
+    }
+
+    public void QueryNews() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .addConverterFactory(GsonConverterFactory.create())
+                .baseUrl(BASE_URL)
+                .build();
+
+        ZhihuNewsService service = retrofit.create(ZhihuNewsService.class);
+        Call<NewsContentResult> call = service.getResult(newsId);
+        call.enqueue(new Callback<NewsContentResult>() {
+
+            @Override
+            public void onResponse(Call<NewsContentResult> call, Response<NewsContentResult> response) {
+                if (response.isSuccessful()) {
+                    NewsContentResult result = response.body();
+                    if (result != null) {
+                        Log.i(TAG, "title:" + result.title);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<NewsContentResult> call, Throwable t) {
+                Log.e(TAG, "get news failed");
+            }
+        });
+    }
 }
