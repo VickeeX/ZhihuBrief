@@ -7,14 +7,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.vickee.zhihubrief.NewsResult.NewsContentResult;
 
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 
@@ -22,6 +21,8 @@ public class NewsActivity extends AppCompatActivity {
     String BASE_URL = "http://news-at.zhihu.com";
     private static final String TAG = "NewsActivity";
     static int newsId;
+    private WebView wvNews;
+    private WebSettings webSettings;
 
 
     @Override
@@ -41,13 +42,32 @@ public class NewsActivity extends AppCompatActivity {
         });
         newsId = NewsActivity.this.getIntent().getIntExtra("id", 0);
         Log.i(TAG, "id:" + newsId);
-        new Thread(){
+//        new Thread() {
+//            @Override
+//            public void run() {
+//                QueryNews();
+//                Log.i(TAG, "new thread");
+//            }
+//        }.start();
+
+        wvNews = (WebView) findViewById(R.id.wv_news);
+        webSettings = wvNews.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        wvNews.loadUrl("http://news-at.zhihu.com/api/4/news/"+newsId);
+        //获取WebSettings对象,设置缩放
+        webSettings.setUseWideViewPort(true);
+        webSettings.setLoadWithOverviewMode(true);
+        webSettings.setBuiltInZoomControls(true);
+        webSettings.setUseWideViewPort(true);
+        wvNews.setWebViewClient(new WebViewClient() {
+
             @Override
-            public void run() {
-                QueryNews();
-                Log.i(TAG,"new thread");
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                Log.d("访问网址：", url);
+                wvNews.loadUrl(url);
+                return true;
             }
-        }.start();
+        });
     }
 
 
@@ -56,30 +76,30 @@ public class NewsActivity extends AppCompatActivity {
         Call<NewsContentResult> getResult(@Path("newsId") int newsId);
     }
 
-    public void QueryNews() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl(BASE_URL)
-                .build();
-
-        ZhihuNewsService service = retrofit.create(ZhihuNewsService.class);
-        Call<NewsContentResult> call = service.getResult(newsId);
-        call.enqueue(new Callback<NewsContentResult>() {
-
-            @Override
-            public void onResponse(Call<NewsContentResult> call, Response<NewsContentResult> response) {
-                if (response.isSuccessful()) {
-                    NewsContentResult result = response.body();
-                    if (result != null) {
-                        Log.i(TAG, "title:" + result.title);
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<NewsContentResult> call, Throwable t) {
-                Log.e(TAG, "get news failed");
-            }
-        });
-    }
+//    public void QueryNews() {
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .baseUrl(BASE_URL)
+//                .build();
+//
+//        ZhihuNewsService service = retrofit.create(ZhihuNewsService.class);
+//        Call<NewsContentResult> call = service.getResult(newsId);
+//        call.enqueue(new Callback<NewsContentResult>() {
+//
+//            @Override
+//            public void onResponse(Call<NewsContentResult> call, Response<NewsContentResult> response) {
+//                if (response.isSuccessful()) {
+//                    NewsContentResult result = response.body();
+//                    if (result != null) {
+//                        Log.i(TAG, "title:" + result.title);
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<NewsContentResult> call, Throwable t) {
+//                Log.e(TAG, "get news failed");
+//            }
+//        });
+//    }
 }
