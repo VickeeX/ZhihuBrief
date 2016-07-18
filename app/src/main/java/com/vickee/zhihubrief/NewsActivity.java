@@ -13,14 +13,11 @@ import android.webkit.WebViewClient;
 
 import com.vickee.zhihubrief.NewsResult.NewsContentResult;
 
-import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Path;
-
 public class NewsActivity extends AppCompatActivity {
     String BASE_URL = "http://news-at.zhihu.com";
     private static final String TAG = "NewsActivity";
     static int newsId;
+    private NewsContentResult result;
     private WebView wvNews;
     private WebSettings webSettings;
 
@@ -65,17 +62,18 @@ public class NewsActivity extends AppCompatActivity {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 Log.d("访问网址：", url);
                 wvNews.loadUrl(url);
+//                wvNews.loadDataWithBaseURL(BASE_URL, result.body, "text/html", "utf-8",null);
                 return true;
             }
         });
     }
 
 
-    public interface ZhihuNewsService {
-        @GET("/api/4/news/{newsId}")
-        Call<NewsContentResult> getResult(@Path("newsId") int newsId);
-    }
-
+//    public interface ZhihuNewsService {
+//        @GET("/api/4/news/{newsId}")
+//        Call<NewsContentResult> getResult(@Path("newsId") int newsId);
+//    }
+//
 //    public void QueryNews() {
 //        Retrofit retrofit = new Retrofit.Builder()
 //                .addConverterFactory(GsonConverterFactory.create())
@@ -89,7 +87,7 @@ public class NewsActivity extends AppCompatActivity {
 //            @Override
 //            public void onResponse(Call<NewsContentResult> call, Response<NewsContentResult> response) {
 //                if (response.isSuccessful()) {
-//                    NewsContentResult result = response.body();
+//                    result = response.body();
 //                    if (result != null) {
 //                        Log.i(TAG, "title:" + result.title);
 //                    }
