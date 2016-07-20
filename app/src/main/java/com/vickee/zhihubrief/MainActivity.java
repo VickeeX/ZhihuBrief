@@ -2,10 +2,12 @@ package com.vickee.zhihubrief;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +18,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
+import android.widget.TextView;
 
 import com.vickee.zhihubrief.NewsResult.NewsLatestResult;
 import com.vickee.zhihubrief.widget.DividerDecoration;
@@ -37,6 +43,18 @@ public class MainActivity extends AppCompatActivity
     List<NewsLatestResult.StoriesBean> story;
     NewsLatestAdapter newsLatestAdapter;
     RecyclerView recyclerView;
+    private ViewPager mViewpager;
+    private List<ImageView> imageViews;
+    private TextView mTextView;
+    private LinearLayout linearLayout;
+    private int[] bannerImages = {};
+    private BannerAdapter mAdapter;
+    private BannerListener bannerListener;
+
+    // 圆圈标志位
+    private int pointIndex = 0;
+    // 线程标志
+    private boolean isStop = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +80,27 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        mViewpager = (ViewPager) findViewById(R.id.viewpager);
+        linearLayout = (LinearLayout) findViewById(R.id.points);
+        initVPData();
+        initVPAction();
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                while (!isStop) {
+                    SystemClock.sleep(2000);
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            mViewpager.setCurrentItem(mViewpager.getCurrentItem() + 1);
+                        }
+                    });
+                }
+            }
+        }).start();
 
 
         recyclerView = (RecyclerView) findViewById(R.id.rv_latest_news);
@@ -152,7 +191,7 @@ public class MainActivity extends AppCompatActivity
                             newsLatestAdapter.setOnItemClickListener(new NewsLatestAdapter.OnItemClickListener() {
                                 @Override
                                 public void onItemClick(View view, int position) {
-                                    startActivity(new Intent(MainActivity.this,NewsActivity.class).putExtra("id",story.get(position).id));
+                                    startActivity(new Intent(MainActivity.this, NewsActivity.class).putExtra("id", story.get(position).id));
                                 }
                             });
                             recyclerView.setAdapter(newsLatestAdapter);
@@ -166,5 +205,67 @@ public class MainActivity extends AppCompatActivity
                 Log.e("ZhihuLatestNews", "failed");
             }
         });
+    }
+
+    private void initVPData() {
+        imageViews = new ArrayList<ImageView>();
+        View view;
+        LayoutParams params;
+        for (int i = 0; i < bannerImages.length; i++) {
+            // 设置广告图
+            ImageView imageView = new ImageView(MainActivity.this);
+            imageView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+            imageView.setBackgroundResource(bannerImages[i]);
+            imageViews.add(imageView);
+            // 设置圆圈点
+            view = new View(MainActivity.this);
+            params = new LayoutParams(5, 5);
+            params.leftMargin = 10;
+            view.setBackgroundResource(R.drawable.point_background);
+            view.setLayoutParams(params);
+            view.setEnabled(false);
+
+            linearLayout.addView(view);
+        }
+        mAdapter = new BannerAdapter(imageViews);
+        mViewpager.setAdapter(mAdapter);
+    }
+
+    private void initVPAction() {
+        bannerListener = new BannerListener();
+        mViewpager.setOnPageChangeListener(bannerListener);
+        //取中间数来作为起始位置
+        int index = (Integer.MAX_VALUE / 2) - (Integer.MAX_VALUE / 2 % imageViews.size());
+        //用来出发监听器
+        mViewpager.setCurrentItem(index);
+        linearLayout.getChildAt(pointIndex).setEnabled(true);
+    }
+
+    class BannerListener implements ViewPager.OnPageChangeListener {
+
+        @Override
+        public void onPageScrollStateChanged(int arg0) {
+        }
+
+        @Override
+        public void onPageScrolled(int arg0, float arg1, int arg2) {
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            int newPosition = position % bannerImages.length;
+            linearLayout.getChildAt(newPosition).setEnabled(true);
+            linearLayout.getChildAt(pointIndex).setEnabled(false);
+            // 更新标志位
+            pointIndex = newPosition;
+
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        // 关闭定时器
+        isStop = true;
+        super.onDestroy();
     }
 }

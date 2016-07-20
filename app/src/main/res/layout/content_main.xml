@@ -9,6 +9,32 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.vickee.zhihubrief.MainActivity"
     tools:showIn="@layout/app_bar_main">
+    <!--<RelativeLayout-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content">-->
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="150dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/viewpager"
+        android:background="#33000000"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <LinearLayout
+            android:id="@+id/points"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+        </LinearLayout>
+    </LinearLayout>
+    <!--</RelativeLayout>-->
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_latest_news"
