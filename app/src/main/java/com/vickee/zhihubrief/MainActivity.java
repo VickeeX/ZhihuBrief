@@ -44,10 +44,10 @@ public class MainActivity extends AppCompatActivity
     NewsLatestAdapter newsLatestAdapter;
     RecyclerView recyclerView;
     private ViewPager mViewpager;
-    private List<ImageView> imageViews;
+    private List<ImageView> mList;
     private TextView mTextView;
     private LinearLayout linearLayout;
-    private int[] bannerImages = {R.drawable.image1,R.drawable.image2,R.drawable.image3,R.drawable.image4};
+    private int[] bannerImages = {R.drawable.image,R.drawable.image,R.drawable.image,R.drawable.image};
     private BannerAdapter mAdapter;
     private BannerListener bannerListener;
 
@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initVPData() {
-        imageViews = new ArrayList<ImageView>();
+        mList = new ArrayList<ImageView>();
         View view;
         LayoutParams params;
         for (int i = 0; i < bannerImages.length; i++) {
@@ -216,7 +216,7 @@ public class MainActivity extends AppCompatActivity
             ImageView imageView = new ImageView(MainActivity.this);
             imageView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
             imageView.setBackgroundResource(bannerImages[i]);
-            imageViews.add(imageView);
+            mList.add(imageView);
             // 设置圆圈点
             view = new View(MainActivity.this);
             params = new LayoutParams(5, 5);
@@ -227,7 +227,7 @@ public class MainActivity extends AppCompatActivity
 
             linearLayout.addView(view);
         }
-        mAdapter = new BannerAdapter(imageViews);
+        mAdapter = new BannerAdapter(mList);
         mViewpager.setAdapter(mAdapter);
     }
 
@@ -235,7 +235,7 @@ public class MainActivity extends AppCompatActivity
         bannerListener = new BannerListener();
         mViewpager.setOnPageChangeListener(bannerListener);
         //取中间数来作为起始位置
-        int index = (Integer.MAX_VALUE / 2) - (Integer.MAX_VALUE / 2 % imageViews.size());
+        int index = (Integer.MAX_VALUE / 2) - (Integer.MAX_VALUE / 2 % mList.size());
         //用来出发监听器
         mViewpager.setCurrentItem(index);
         linearLayout.getChildAt(pointIndex).setEnabled(true);
