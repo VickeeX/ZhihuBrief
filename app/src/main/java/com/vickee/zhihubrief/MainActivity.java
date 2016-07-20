@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity
     private List<ImageView> imageViews;
     private TextView mTextView;
     private LinearLayout linearLayout;
-    private int[] bannerImages = {};
+    private int[] bannerImages = {R.drawable.image1,R.drawable.image2,R.drawable.image3,R.drawable.image4};
     private BannerAdapter mAdapter;
     private BannerListener bannerListener;
 
