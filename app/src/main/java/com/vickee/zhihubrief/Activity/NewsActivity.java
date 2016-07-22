@@ -1,4 +1,4 @@
-package com.vickee.zhihubrief;
+package com.vickee.zhihubrief.Activity;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,7 +11,8 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.vickee.zhihubrief.NewsResult.NewsContentResult;
+import com.vickee.zhihubrief.BeanResult.NewsContentResult;
+import com.vickee.zhihubrief.R;
 
 public class NewsActivity extends AppCompatActivity {
     String BASE_URL = "http://news-at.zhihu.com";

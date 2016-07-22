@@ -1,4 +1,4 @@
-package com.vickee.zhihubrief.NewsResult;
+package com.vickee.zhihubrief.BeanResult;
 
 import java.util.List;
 
