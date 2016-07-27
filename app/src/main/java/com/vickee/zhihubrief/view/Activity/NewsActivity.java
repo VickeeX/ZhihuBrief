@@ -1,4 +1,4 @@
-package com.vickee.zhihubrief.Activity;
+package com.vickee.zhihubrief.view.Activity;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,7 +11,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.vickee.zhihubrief.BeanResult.NewsContentResult;
+import com.vickee.zhihubrief.entity.NewsContentResult;
 import com.vickee.zhihubrief.R;
 
 public class NewsActivity extends AppCompatActivity {
@@ -63,7 +63,6 @@ public class NewsActivity extends AppCompatActivity {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 Log.d("访问网址：", url);
                 wvNews.loadUrl(url);
-//                wvNews.loadDataWithBaseURL(BASE_URL, result.body, "text/html", "utf-8",null);
                 return true;
             }
         });

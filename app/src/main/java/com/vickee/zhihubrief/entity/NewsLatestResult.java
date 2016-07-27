@@ -1,4 +1,4 @@
-package com.vickee.zhihubrief.BeanResult;
+package com.vickee.zhihubrief.entity;
 
 import java.util.List;
 

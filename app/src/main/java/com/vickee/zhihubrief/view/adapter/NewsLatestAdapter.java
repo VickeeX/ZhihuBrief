@@ -1,4 +1,4 @@
-package com.vickee.zhihubrief;
+package com.vickee.zhihubrief.view.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -9,7 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import com.vickee.zhihubrief.BeanResult.NewsLatestResult;
+import com.vickee.zhihubrief.R;
+import com.vickee.zhihubrief.entity.NewsLatestResult;
 
 import java.util.List;
 
