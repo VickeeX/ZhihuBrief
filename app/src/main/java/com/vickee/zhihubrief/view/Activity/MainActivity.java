@@ -141,10 +141,8 @@ public class MainActivity extends AppCompatActivity
             newsLatestAdapter.setOnItemClickListener(new NewsLatestAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position) {
-                    startActivity(new Intent(MainActivity.this, NewsActivity.class).putExtra("id", stories.get(position).id));
-//                                    URL url = "http://daily.zhihu.com/story/8596452"+story.get(position).id;
-//                                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-//                                    startActivity(browserIntent);
+                    startActivity(new Intent(MainActivity.this, StoryDetailActivity.class)
+                            .putExtra("id", stories.get(position).id));
                 }
             });
             recyclerView.setAdapter(newsLatestAdapter);

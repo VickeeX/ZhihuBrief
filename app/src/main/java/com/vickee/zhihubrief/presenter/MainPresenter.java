@@ -3,7 +3,7 @@ package com.vickee.zhihubrief.presenter;
 import android.os.Handler;
 
 import com.vickee.zhihubrief.entity.NewsLatestResult;
-import com.vickee.zhihubrief.model.GetNewsListener;
+import com.vickee.zhihubrief.model.IGetNewsListener;
 import com.vickee.zhihubrief.model.GetNewsRetrofit;
 import com.vickee.zhihubrief.model.IGetNewsRetrofit;
 import com.vickee.zhihubrief.view.view.IMainView;
@@ -23,7 +23,7 @@ public class MainPresenter {
 
     public void getLatestNews(){
         mainView.showLoading();
-        getNewsRetrofit.getLatestNews(new GetNewsListener() {
+        getNewsRetrofit.getLatestNews(new IGetNewsListener() {
             @Override
             public void getNewsSuccess(final NewsLatestResult result) {
                 handler.post(new Runnable() {

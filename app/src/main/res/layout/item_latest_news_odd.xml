@@ -29,12 +29,12 @@
             android:text="11111"
             android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/tv_latest_id_odd"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="6dp"
-            android:text="111111"
-            android:textColor="@color/grey" />
+        <!--<TextView-->
+            <!--android:id="@+id/tv_latest_id_odd"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:paddingTop="6dp"-->
+            <!--android:text="111111"-->
+            <!--android:textColor="@color/grey" />-->
     </LinearLayout>
 </LinearLayout>

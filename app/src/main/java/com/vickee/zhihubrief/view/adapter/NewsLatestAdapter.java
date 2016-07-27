@@ -44,7 +44,6 @@ public class NewsLatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         final NewsLatestResult.StoriesBean story = storiesBeen.get(position);
         ((LatestNewsOdd) holder).tvTitle.setText(story.title);
-        ((LatestNewsOdd) holder).tvId.setText("[图片" + story.images.size() + "张]");
         Picasso.with(mContext).load(story.images.get(0)).into(((LatestNewsOdd) holder).ivImage);
         if (onItemClickListener != null) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -63,13 +62,11 @@ public class NewsLatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     class LatestNewsOdd extends RecyclerView.ViewHolder {
         public TextView tvTitle;
-        public TextView tvId;
         public ImageView ivImage;
 
         public LatestNewsOdd(View itemView) {
             super(itemView);
             tvTitle = (TextView) itemView.findViewById(R.id.tv_latest_title_odd);
-            tvId = (TextView) itemView.findViewById(R.id.tv_latest_id_odd);
             ivImage = (ImageView) itemView.findViewById(R.id.iv_latest_image_odd);
         }
     }
