@@ -27,24 +27,21 @@ import com.vickee.zhihubrief.widget.DividerDecoration;
 
 import java.util.List;
 
-import butterknife.Bind;
-
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, IMainView {
 
     private static final String TAG = "MainActivity";
 
-    @Bind(R.id.drawer_layout)
-    DrawerLayout drawer;
-    @Bind(R.id.toolbar)
-    Toolbar toolbar;
-    @Bind(R.id.fab)
-    FloatingActionButton fab;
-    @Bind(R.id.nav_view)
-    NavigationView navigationView;
-    @Bind(R.id.getnews_progress)
+    //    @Bind(R.id.drawer_layout)
+//    DrawerLayout drawer;
+//    @Bind(R.id.toolbar)
+//    Toolbar toolbar;
+//    @Bind(R.id.fab)
+//    FloatingActionButton fab;
+//    @Bind(R.id.nav_view)
+//    NavigationView navigationView;
     ProgressBar progressBar;
-    @Bind(R.id.rv_latest_news)
+    //    @Bind(R.id.rv_latest_news)
     RecyclerView recyclerView;
 
     private MainPresenter mainPresenter = new MainPresenter(this);
@@ -53,7 +50,10 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -62,11 +62,17 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        progressBar = (ProgressBar) findViewById(R.id.getnews_progress);
+        recyclerView = (RecyclerView) findViewById(R.id.rv_latest_news);
 
         mainPresenter.getLatestNews();
     }
@@ -121,7 +127,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_send) {
 
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
