@@ -1,6 +1,7 @@
 package com.vickee.zhihubrief.presenter;
 
 import android.os.Handler;
+import android.util.Log;
 
 import com.vickee.zhihubrief.entity.NewsContentResult;
 import com.vickee.zhihubrief.model.GetNewsRetrofit;
@@ -12,6 +13,7 @@ import com.vickee.zhihubrief.view.view.IStoryDetailView;
  * Created by Vickee on 2016/7/27.
  */
 public class StoryDetailPresenter {
+    private static final String TAG = "StoryDetailPresenter";
     private IGetNewsRetrofit retrofit;
     private IStoryDetailView storyDetailView;
     private Handler handler = new Handler();
@@ -28,7 +30,10 @@ public class StoryDetailPresenter {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        storyDetailView.loadContentData(contentResult);
+                        if (contentResult.title != null) {
+                            Log.i(TAG, contentResult.id + "," + contentResult.title);
+                            storyDetailView.loadContentData(contentResult);
+                        }
                     }
                 });
             }

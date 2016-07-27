@@ -46,7 +46,7 @@ public class GetNewsRetrofit implements IGetNewsRetrofit {
 
     @Override
     public void getStoryDetail(int id, final IGetStoryDetailListener listener) {
-        Call<NewsContentResult> call = service.getStoryDetail();
+        Call<NewsContentResult> call = service.getStoryDetail(id);
         call.enqueue(new Callback<NewsContentResult>() {
             @Override
             public void onResponse(Call<NewsContentResult> call, Response<NewsContentResult> response) {
