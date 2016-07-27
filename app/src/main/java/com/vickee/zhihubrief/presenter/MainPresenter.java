@@ -22,6 +22,7 @@ public class MainPresenter {
     }
 
     public void getLatestNews(){
+        mainView.showLoading();
         getNewsRetrofit.getLatestNews(new GetNewsListener() {
             @Override
             public void getNewsSuccess(final NewsLatestResult result) {
@@ -29,13 +30,15 @@ public class MainPresenter {
                     @Override
                     public void run() {
                         mainView.setNewsAdapter(result.stories);
+                        mainView.hideLoading();
                     }
                 });
             }
 
             @Override
             public void getNewsFailed() {
-
+                mainView.getNewsFailed();
+                mainView.hideLoading();
             }
         });
     }

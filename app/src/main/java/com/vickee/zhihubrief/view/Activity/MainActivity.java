@@ -15,9 +15,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.vickee.zhihubrief.R;
 import com.vickee.zhihubrief.entity.NewsLatestResult;
+import com.vickee.zhihubrief.presenter.MainPresenter;
 import com.vickee.zhihubrief.view.adapter.NewsLatestAdapter;
 import com.vickee.zhihubrief.view.view.IMainView;
 import com.vickee.zhihubrief.widget.DividerDecoration;
@@ -30,7 +33,6 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, IMainView {
 
     private static final String TAG = "MainActivity";
-    private static final String BASE_URL = "http://news-at.zhihu.com";
 
     @Bind(R.id.drawer_layout)
     DrawerLayout drawer;
@@ -40,10 +42,12 @@ public class MainActivity extends AppCompatActivity
     FloatingActionButton fab;
     @Bind(R.id.nav_view)
     NavigationView navigationView;
+    @Bind(R.id.getnews_progress)
+    ProgressBar progressBar;
     @Bind(R.id.rv_latest_news)
     RecyclerView recyclerView;
 
-    NewsLatestAdapter newsLatestAdapter;
+    private MainPresenter mainPresenter = new MainPresenter(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,10 +68,7 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.addItemDecoration(new DividerDecoration(this));
-        //get the latest news and set data to the recyclerView
+        mainPresenter.getLatestNews();
     }
 
     @Override
@@ -129,7 +130,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void setNewsAdapter(final List<NewsLatestResult.StoriesBean> stories) {
         if (stories.size() != 0) {
-            newsLatestAdapter = new NewsLatestAdapter(MainActivity.this, stories);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            recyclerView.addItemDecoration(new DividerDecoration(this));
+            NewsLatestAdapter newsLatestAdapter = new NewsLatestAdapter(MainActivity.this, stories);
             newsLatestAdapter.setOnItemClickListener(new NewsLatestAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position) {
@@ -141,5 +144,20 @@ public class MainActivity extends AppCompatActivity
             });
             recyclerView.setAdapter(newsLatestAdapter);
         }
+    }
+
+    @Override
+    public void getNewsFailed() {
+        Toast.makeText(this, "Sorry for getting news failed.", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void showLoading() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideLoading() {
+        progressBar.setVisibility(View.GONE);
     }
 }
