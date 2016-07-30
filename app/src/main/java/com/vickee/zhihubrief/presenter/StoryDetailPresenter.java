@@ -1,47 +1,51 @@
 package com.vickee.zhihubrief.presenter;
 
-import android.os.Handler;
-import android.util.Log;
-
 import com.vickee.zhihubrief.entity.NewsContentResult;
-import com.vickee.zhihubrief.model.GetNewsRetrofit;
-import com.vickee.zhihubrief.model.IGetNewsRetrofit;
-import com.vickee.zhihubrief.model.IGetStoryDetailListener;
+import com.vickee.zhihubrief.model.GetRetrofit;
+import com.vickee.zhihubrief.model.IGetRetrofit;
 import com.vickee.zhihubrief.view.view.IStoryDetailView;
+
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by Vickee on 2016/7/27.
  */
 public class StoryDetailPresenter {
     private static final String TAG = "StoryDetailPresenter";
-    private IGetNewsRetrofit retrofit;
+    private IGetRetrofit retrofit;
     private IStoryDetailView storyDetailView;
-    private Handler handler = new Handler();
 
     public StoryDetailPresenter(IStoryDetailView storyDetailView) {
         this.storyDetailView = storyDetailView;
-        retrofit = new GetNewsRetrofit();
+        retrofit = new GetRetrofit();
     }
 
     public void getStoryDetail() {
-        retrofit.getStoryDetail(storyDetailView.getId(), new IGetStoryDetailListener() {
+        new Thread(new Runnable() {
             @Override
-            public void getNewsSuccess(final NewsContentResult contentResult) {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (contentResult.title != null) {
-                            Log.i(TAG, contentResult.id + "," + contentResult.title);
-                            storyDetailView.loadContentData(contentResult);
-                        }
-                    }
-                });
-            }
+            public void run() {
+                retrofit.getService()
+                        .getStoryDetail(storyDetailView.getId())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Subscriber<NewsContentResult>() {
+                            @Override
+                            public void onCompleted() {
 
-            @Override
-            public void getNewsFailed() {
-                storyDetailView.getNewsFailed();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                storyDetailView.getNewsFailed();
+                            }
+
+                            @Override
+                            public void onNext(NewsContentResult contentResult) {
+                                storyDetailView.loadContentData(contentResult);
+                            }
+                        });
             }
-        });
+        }).start();
+
     }
 }
