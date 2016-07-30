@@ -23,7 +23,6 @@ public class GetNewsRetrofit implements IGetNewsRetrofit {
                 .baseUrl(BASE_URL)
                 .build();
         service = retrofit.create(ZhihuService.class);
-
     }
 
     @Override
