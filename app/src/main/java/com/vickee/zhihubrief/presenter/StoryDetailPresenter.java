@@ -7,6 +7,7 @@ import com.vickee.zhihubrief.view.view.IStoryDetailView;
 
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Vickee on 2016/7/27.
@@ -22,30 +23,26 @@ public class StoryDetailPresenter {
     }
 
     public void getStoryDetail() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                retrofit.getService()
-                        .getStoryDetail(storyDetailView.getId())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Subscriber<NewsContentResult>() {
-                            @Override
-                            public void onCompleted() {
 
-                            }
+        retrofit.getService()
+                .getStoryDetail(storyDetailView.getId())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<NewsContentResult>() {
+                    @Override
+                    public void onCompleted() {
 
-                            @Override
-                            public void onError(Throwable e) {
-                                storyDetailView.getNewsFailed();
-                            }
+                    }
 
-                            @Override
-                            public void onNext(NewsContentResult contentResult) {
-                                storyDetailView.loadContentData(contentResult);
-                            }
-                        });
-            }
-        }).start();
+                    @Override
+                    public void onError(Throwable e) {
+                        storyDetailView.getNewsFailed();
+                    }
 
+                    @Override
+                    public void onNext(NewsContentResult contentResult) {
+                        storyDetailView.loadContentData(contentResult);
+                    }
+                });
     }
 }
